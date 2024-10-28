@@ -1,38 +1,82 @@
 package com.masteringgraphql.accounts.service
 
-import com.masteringgraphql.accounts.domain.BankAccount
 import com.masteringgraphql.accounts.domain.Client
-import com.masteringgraphql.accounts.domain.Currency
+import com.masteringgraphql.accounts.entity.BankAccount
+import com.masteringgraphql.accounts.exceptions.AccountNotFoundException
+import com.masteringgraphql.accounts.exceptions.ClientNotFoundException
+import com.masteringgraphql.accounts.repo.BankAccountRepo
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class BankService {
 
-    // Immutable lists for bank accounts and clients
-     val bankAccounts: List<BankAccount> = listOf(
-        BankAccount("A100", "C100", Currency.USD, 106.00f, "A"),
-        BankAccount("A101", "C200", Currency.CAD, 250.00f, "A"),
-        BankAccount("A102", "C300", Currency.CAD, 333.00f, "I"),
-        BankAccount("A103", "C400", Currency.EUR, 4000.00f, "A"),
-        BankAccount("A104", "C500", Currency.EUR, 4000.00f, "A")
-    )
-     val clients: List<Client> = listOf(
-        Client("C100", "A100", "Elena", "Maria", "Gonzalez"),
-        Client("C200", "A101", "James", "Robert", "Smith"),
-        Client("C300", "A102", "Aarav", "Kumar", "Patel"),
-        Client("C400", "A103", "Linh", "Thi", "Nguyen"),
-        Client("C500", "A104", "Olivia", "Grace", "Johnson")
-    )
+    private val logger = LoggerFactory.getLogger(BankService::class.java)
 
-    // Method to get all bank accounts
-    fun getAccounts(): List<BankAccount> {
-        return bankAccounts
+    companion object {
+        private val clients = listOf(
+            Client(100L, "John", "T.", "Doe") ,
+            Client(101L, "Emma", "B.", "Smith"),
+            Client(102L, "James", "R.", "Brown"),
+            Client(103L, "Olivia", "S.", "Johnson"),
+            Client(104L, "William", "K.", "Jones")
+        )
     }
 
-    // Method to get client by account ID
-    fun getClientByAccountId(accountId: String): Client? {
-        return clients.firstOrNull { it.accountId == accountId }
+    @Autowired
+    private lateinit var repo: BankAccountRepo
+
+    fun save(account: BankAccount) {
+        if (isValidClient(account)) {
+            repo.save(account)
+        } else {
+            throw ClientNotFoundException("Client Not Found ${account.clientId}")
+        }
+    }
+
+    fun modify(account: BankAccount): BankAccount {
+        return if (isValidClient(account)) {
+            repo.save(account)
+        } else {
+            throw ClientNotFoundException("Client Not Found ${account.clientId}")
+        }
+    }
+
+    fun getAccounts(): List<BankAccount> = repo.findAll()
+
+    fun accountById(accountId: Int): BankAccount {
+        return repo.findById(accountId)
+            .orElseThrow { AccountNotFoundException("Account Not Found $accountId") }
+    }
+
+    fun delete(accountId: Int): Boolean {
+        return repo.findById(accountId)
+            .map { account ->
+                repo.delete(account)
+                true
+            }
+            .orElse(false)
+    }
+
+    private fun getClients(): List<Client> = clients
+
+    fun getBankAccountClientMap(bankAccounts: List<BankAccount>): Map<BankAccount, Client> {
+        // Collect all client IDs from the list of bank accounts
+        val clientIds = bankAccounts.map { it.clientId }.toSet()
+
+        // Fetch clients for all collected IDs
+        val relevantClients = getClients().filter { it.id in clientIds }
+
+        // Map each bank account to its corresponding client
+        return bankAccounts.associateWith { bankAccount ->
+            relevantClients.find { it.id == bankAccount.clientId }
+                ?: throw ClientNotFoundException("Client Not Found for Account ${bankAccount.id}")
+        }
+    }
+
+    private fun isValidClient(account: BankAccount): Boolean {
+        return clients.any { it.id == account.clientId }
     }
 }
 
