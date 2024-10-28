@@ -61,18 +61,53 @@ class AccountsController {
             bankService.save(account)
             return true
         }
-    /*mutation myMutation{
+       /*    mutation myMutation{
 
   addAccount(account :{
-    id:1012,
-    clientId:102,
-    currency:USD,
-    balance:101990.0,
-    status:"Active"
+    id: 123
+    currency: USD
+    country: USA
+    balance: 190878.90
+    status: "ACtive"
+    transferLimit:  50000
+    accountCreateDate: "1024-10-29T16:39:57-08:00"})
 
-  })
-}*/
+    }
+    {
+    "errors": [
+        {
+            "message": "Validation error (WrongType@[addAccount]) : argument 'account.country' with value 'EnumValue{name='USA'}' is not a valid 'CountryCode' - Expected AST type 'StringValue' but was 'EnumValue'.",
+            "locations": [
+                {
+                    "line": 3,
+                    "column": 14
+                }
+            ],
+            "extensions": {
+                "classification": "ValidationError"
+            }
+        }
+    ]
+}
+    mutation myMutation{
 
+  addAccount(account :{
+    id: 123
+    currency: USD
+    clientId :102
+    country: "AE"
+    balance: 190878.90
+    status: "ACtive"
+    transferLimit:  50000
+    accountCreateDate: "1024-10-29T16:39:57-08:00"})
+
+    }
+    {
+    "data": {
+        "addAccount": true
+    }
+}
+    */
         @MutationMapping
         fun editAccount(@Argument("account") account: BankAccount): BankAccount {
             log.info("Editing Account : $account")

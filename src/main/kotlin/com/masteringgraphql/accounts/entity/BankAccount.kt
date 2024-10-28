@@ -7,6 +7,7 @@ import jakarta.persistence.*
 import lombok.AllArgsConstructor
 import lombok.Data
 import lombok.NoArgsConstructor
+import java.time.LocalDateTime
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,9 +27,18 @@ class BankAccount {
     var currency: Currency? = null
 
     @Column
+    var country: String? = null
+
+    @Column
     var balance: Float? = null
 
     @Column
     var status: String? = null
+
+    @Column
+    var transferLimit: Float? = null
+
+    @Column
+    var accountCreateDate: LocalDateTime? = null
 }
 
