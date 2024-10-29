@@ -4,10 +4,14 @@ package com.masteringgraphql.accounts.controller
 import com.masteringgraphql.accounts.service.BankService
 import com.masteringgraphql.accounts.domain.Client
 import com.masteringgraphql.accounts.entity.BankAccount
+import com.masteringgraphql.accounts.exceptions.ClientNotFoundException
+import graphql.GraphQLError
+import graphql.schema.DataFetchingEnvironment
 
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.graphql.data.method.annotation.*
+import org.springframework.graphql.execution.ErrorType
 import org.springframework.stereotype.Controller
 
 @Controller
@@ -131,9 +135,60 @@ class AccountsController {
             log.info("Deleting Account : $accountId")
             return bankService.delete(accountId)
         }
-    }
-/*mutation myMutation{
+    /*mutation myMutation{
 
   deleteAccount(id :1012)
 }*/
+
+    @GraphQlExceptionHandler
+    fun handle(ex: ClientNotFoundException , environment: DataFetchingEnvironment): GraphQLError {
+        return GraphQLError.newError()
+            .errorType(ErrorType.BAD_REQUEST)
+            .message("Unable to locate the specified client. " +
+                    "Please verify the client details and attempt your request again. : " +
+                    ex.message)
+            .path(environment.executionStepInfo.path)
+            .location(environment.field.sourceLocation)
+            .build()
+    }
+/*    mutation myMutation{
+
+  addAccount(account :{
+    id: 123
+    currency: USD
+    clientId :1020
+    country: "AE"
+    balance: 190878.90
+    status: "ACtive"
+    transferLimit:  50000
+    accountCreateDate: "1024-10-29T16:39:57-08:00"})
+
+    }
+    {
+    "errors": [
+        {
+            "message": "Unable to locate the specified client. Please verify the client details and attempt your request again. : Client Not Found 1020",
+            "locations": [
+                {
+                    "line": 3,
+                    "column": 3
+                }
+            ],
+            "path": [
+                "addAccount"
+            ],
+            "extensions": {
+                "classification": "BAD_REQUEST"
+            }
+        }
+    ],
+    "data": {
+        "addAccount": null
+    }
+}
+
+    */
+
+    }
+
 
