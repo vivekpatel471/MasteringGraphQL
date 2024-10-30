@@ -23,9 +23,9 @@ class AccountsController {
     val log = LoggerFactory.getLogger(AccountsController::class.java)
 
     @QueryMapping("accounts")
-    fun accounts(): List<BankAccount> {
+    fun accounts(@ContextValue accountStatus: String): List<BankAccount> {
        log.info("Getting Accounts")
-        return bankService.getAccounts()
+        return bankService.getAccounts(accountStatus)
     }
 /*query myQuery {
   accounts {

@@ -43,7 +43,7 @@ class BankService {
         }
     }
 
-    fun getAccounts(): List<BankAccount> = repo.findAll()
+    fun getAccounts(accountStatus:String): List<BankAccount> = repo.findByStatus(accountStatus)
 
     fun accountById(accountId: Int): BankAccount {
         return repo.findById(accountId)
