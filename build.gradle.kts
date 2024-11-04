@@ -17,7 +17,11 @@ java {
 repositories {
     mavenCentral()
 }
-
+dependencyManagement {
+    imports {
+        mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release")
+    }
+}
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -30,6 +34,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.springframework.graphql:spring-graphql-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation("com.netflix.graphql.dgs:graphql-dgs:9.1.3")
+    runtimeOnly("com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter:9.1.3")
+
 }
 
 kotlin {
