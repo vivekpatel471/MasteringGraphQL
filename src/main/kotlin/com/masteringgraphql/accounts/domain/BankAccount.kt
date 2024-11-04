@@ -1,10 +1,5 @@
-package com.masteringgraphql.accounts.domain
+package com.accounts.domain
 
+import com.masteringgraphql.accounts.domain.Client
 
-data class BankAccount(
-    val id: Int,
-    val clientId: String,
-    val currency: Currency,
-    val balance: Float,
-    val status: String
-)
+class BankAccount(val id : Int , client : List<Client>?)

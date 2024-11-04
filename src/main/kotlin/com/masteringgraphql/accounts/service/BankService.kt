@@ -1,27 +1,24 @@
 package com.masteringgraphql.accounts.service
 
-import com.masteringgraphql.accounts.domain.BankAccount
-import com.masteringgraphql.accounts.domain.Currency
-import com.sun.jdi.IntegerValue
+import com.masteringgraphql.accounts.domain.Client
 import org.springframework.stereotype.Service
-import java.lang.Integer.*
+import java.util.*
+import java.util.stream.Collectors
 
 
 @Service
 class BankService {
-
-    // Immutable lists for bank accounts and clients
-     val bankAccounts: List<BankAccount> = listOf(
-        BankAccount(100, "C100", Currency.USD, 106.00f, "A"),
-        BankAccount(101, "C200", Currency.CAD, 250.00f, "A"),
-        BankAccount(102, "C300", Currency.CAD, 333.00f, "I"),
-        BankAccount(103, "C400", Currency.EUR, 4000.00f, "A"),
-        BankAccount(104, "C500", Currency.EUR, 4000.00f, "A")
+    private var clients : List<Client> = Arrays.asList<Client>(
+        Client("C100" , 100 , "John" , "T." , "Doe") ,
+        Client("C101" , 101 , "Emma" , "B." , "Smith") ,
+        Client("C102" , 102 , "James" , "R." , "Brown") ,
+        Client("C103" , 103 , "Olivia" , "S." , "Johnson") ,
+        Client("C104" , 100 , "William" , "K." , "Jones")
     )
 
-    // Method to get all bank accounts
-    fun getAccounts(): List<BankAccount> {
-        return bankAccounts
+    fun getClients(accountIds : Int?) : MutableList<Any>? {
+        return clients.stream().filter { c : Client -> c.accountId.equals(accountIds) }
+            .collect(Collectors.toList<Any>())
     }
 }
 

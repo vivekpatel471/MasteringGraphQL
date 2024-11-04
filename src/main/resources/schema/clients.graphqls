@@ -1,0 +1,11 @@
+type BankAccount @key(fields: "id") @extends {
+    id: ID
+    client: [Client]
+}
+
+type Client {
+    id: ID
+    firstName: String
+    middleName: String
+    lastName: String
+}
