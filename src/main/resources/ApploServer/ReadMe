@@ -1,0 +1,11 @@
+Run below comand to demostrate Apollo server graphql
+
+For this node js already install is required
+
+1.mkdir graphql-server-example
+2.cd graphql-server-example
+3.npm init --yes && npm pkg set type="module"
+4.npm install @apollo/server @apollo/gateway graphql apollo-server
+5. touch index.js (reffer src/main/resources/ApploServer/index.js)
+6. Run your aplication
+
